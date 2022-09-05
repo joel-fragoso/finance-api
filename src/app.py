@@ -1,5 +1,6 @@
 import os
 import uuid
+from typing import Optional
 from datetime import datetime
 from flask import Blueprint, Flask, jsonify, Response, request
 from flask_sqlalchemy import SQLAlchemy
@@ -30,15 +31,20 @@ class Category(db.Model):
         default=datetime.utcnow,
         onupdate=datetime.utcnow,
     )
+    parent_id = db.Column(db.String(36), db.ForeignKey("categories.id"))
+    children = db.relationship("Category")
 
-    def __init__(self, _id: str, name: str) -> None:
+    def __init__(self, _id: str, name: str, parent_id: Optional[str] = None) -> None:
         self._id = _id
         self.name = name
+        self.parent_id = parent_id
 
 
 class CategorySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Category
+
+    children = fields.Nested("self", many=True)
 
 
 class Expense(db.Model):
@@ -75,7 +81,7 @@ class ExpenseSchema(ma.SQLAlchemyAutoSchema):
         model = Expense
 
     amount = fields.Number()
-    category = ma.Nested(CategorySchema)
+    category = fields.Nested(CategorySchema)
 
 
 category_schema = CategorySchema()
@@ -119,8 +125,11 @@ def categories_show(_id: str) -> Response:
 @categories.post("/categories")
 def categories_create() -> Response:
     name = request.json.get("name", "")
+    parent_id = request.json.get("parent_id", None)
     try:
-        category_entity = Category(_id=str(uuid.uuid4()), name=name)
+        category_entity = Category(
+            _id=str(uuid.uuid4()), name=name, parent_id=parent_id
+        )
         db.session.add(category_entity)
         db.session.commit()
         return category_schema.jsonify(category_entity), 201
@@ -133,9 +142,11 @@ def categories_create() -> Response:
 @categories.put("/categories/<_id>")
 def categories_update(_id: str) -> Response:
     name = request.json.get("name", "")
+    parent_id = request.json.get("parent_id", None)
     try:
         category_entity = Category.query.get(_id)
         category_entity.name = name
+        category_entity.parent_id = parent_id
         db.session.add(category_entity)
         db.session.commit()
         return category_schema.jsonify(category_entity), 200
