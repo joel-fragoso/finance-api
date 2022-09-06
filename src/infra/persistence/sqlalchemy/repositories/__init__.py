@@ -1,1 +1,2 @@
 from .create_category import CreateCategoryRepository
+from .load_categories import LoadCategoriesRepository
