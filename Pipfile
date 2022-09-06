@@ -21,4 +21,4 @@ pre-commit = "*"
 python_version = "^3.8"
 
 [scripts]
-dev = "flask --app src.app --debug run --reload"
+dev = "flask --app src.main.server --debug run --reload"
