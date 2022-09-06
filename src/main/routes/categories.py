@@ -4,6 +4,9 @@ from flask import Blueprint, Response, request, jsonify
 from src.main.config import db
 from src.infra.persistence.sqlalchemy.models import Category
 from src.infra.persistence.sqlalchemy.schemas import category_schema, categories_schema
+from src.infra.persistence.sqlalchemy.repositories import (
+    CreateCategoryRepository,
+)
 
 categories = Blueprint("categories", __name__, url_prefix="/api/v1.0")
 
@@ -35,11 +38,9 @@ def create() -> Response:
     name = request.json.get("name", "")
     parent_id = request.json.get("parent_id", None)
     try:
-        category_entity = Category(
+        category_entity = CreateCategoryRepository().handle(
             _id=str(uuid.uuid4()), name=name, parent_id=parent_id
         )
-        db.session.add(category_entity)
-        db.session.commit()
         return category_schema.jsonify(category_entity), 201
     except TypeError as error:
         print(error)
