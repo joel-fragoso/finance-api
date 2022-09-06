@@ -7,6 +7,7 @@ from src.infra.persistence.sqlalchemy.schemas import category_schema, categories
 from src.infra.persistence.sqlalchemy.repositories import (
     CreateCategoryRepository,
     LoadCategoriesRepository,
+    LoadCategoryByIdRepository,
 )
 
 categories = Blueprint("categories", __name__, url_prefix="/api/v1.0")
@@ -26,7 +27,7 @@ def index() -> Response:
 @categories.get("/categories/<_id>")
 def show(_id: str) -> Response:
     try:
-        category_entity = Category.query.get(_id)
+        category_entity = LoadCategoryByIdRepository().handle(category_id=_id)
         return category_schema.jsonify(category_entity), 200
     except TypeError as error:
         print(error)
