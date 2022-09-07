@@ -8,6 +8,7 @@ from src.infra.persistence.sqlalchemy.repositories import (
     CreateCategoryRepository,
     LoadCategoriesRepository,
     LoadCategoryByIdRepository,
+    UpdateCategoryRepository,
 )
 
 categories = Blueprint("categories", __name__, url_prefix="/api/v1.0")
@@ -55,11 +56,7 @@ def update(_id: str) -> Response:
     name = request.json.get("name", "")
     parent_id = request.json.get("parent_id", None)
     try:
-        category_entity = Category.query.get(_id)
-        category_entity.name = name
-        category_entity.parent_id = parent_id
-        db.session.add(category_entity)
-        db.session.commit()
+        category_entity = UpdateCategoryRepository().handle(_id=_id, name=name, parent_id=parent_id)
         return category_schema.jsonify(category_entity), 200
     except TypeError as error:
         print(error)
