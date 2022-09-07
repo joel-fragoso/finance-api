@@ -2,10 +2,10 @@ import uuid
 from flask import Blueprint, Response, request, jsonify
 
 from src.main.config import db
-from src.infra.persistence.sqlalchemy.models import Category
 from src.infra.persistence.sqlalchemy.schemas import category_schema, categories_schema
 from src.infra.persistence.sqlalchemy.repositories import (
     CreateCategoryRepository,
+    DeleteCategoryRepository,
     LoadCategoriesRepository,
     LoadCategoryByIdRepository,
     UpdateCategoryRepository,
@@ -57,7 +57,7 @@ def update(_id: str) -> Response:
     parent_id = request.json.get("parent_id", None)
     try:
         category_entity = UpdateCategoryRepository().handle(
-            _id=_id, name=name, parent_id=parent_id
+            category_id=_id, name=name, parent_id=parent_id
         )
         return category_schema.jsonify(category_entity), 200
     except TypeError as error:
@@ -69,9 +69,10 @@ def update(_id: str) -> Response:
 @categories.delete("/categories/<_id>")
 def delete(_id: str) -> Response:
     try:
-        category_entity = Category.query.get(_id)
-        db.session.delete(category_entity)
-        db.session.commit()
+        # category_entity = Category.query.get(_id)
+        # db.session.delete(category_entity)
+        # db.session.commit()
+        category_entity = DeleteCategoryRepository().handle(category_id=_id)
         return category_schema.jsonify(category_entity), 204
     except TypeError as error:
         print(error)

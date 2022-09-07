@@ -1,4 +1,5 @@
 from .create_category import CreateCategoryRepository
+from .delete_category import DeleteCategoryRepository
 from .load_categories import LoadCategoriesRepository
 from .load_category_by_id import LoadCategoryByIdRepository
 from .update_category import UpdateCategoryRepository
