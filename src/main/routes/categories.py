@@ -56,7 +56,9 @@ def update(_id: str) -> Response:
     name = request.json.get("name", "")
     parent_id = request.json.get("parent_id", None)
     try:
-        category_entity = UpdateCategoryRepository().handle(_id=_id, name=name, parent_id=parent_id)
+        category_entity = UpdateCategoryRepository().handle(
+            _id=_id, name=name, parent_id=parent_id
+        )
         return category_schema.jsonify(category_entity), 200
     except TypeError as error:
         print(error)
