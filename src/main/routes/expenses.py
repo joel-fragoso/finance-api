@@ -4,6 +4,7 @@ from flask import Blueprint, Response, request, jsonify
 from src.main.config import db
 from src.infra.persistence.sqlalchemy.models import Expense
 from src.infra.persistence.sqlalchemy.schemas import expense_schema, expenses_schema
+from src.infra.persistence.sqlalchemy.repositories import LoadExpensesRepository
 
 expenses = Blueprint("expenses", __name__, url_prefix="/api/v1.0")
 
@@ -11,7 +12,7 @@ expenses = Blueprint("expenses", __name__, url_prefix="/api/v1.0")
 @expenses.get("/expenses")
 def expenses_index() -> Response:
     try:
-        expenses_entity = Expense.query.all()
+        expenses_entity = LoadExpensesRepository().handle()
         return jsonify(expenses_schema.dump(expenses_entity)), 200
     except TypeError as error:
         print(error)
