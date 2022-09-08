@@ -3,5 +3,6 @@ from .delete_category import DeleteCategoryRepository
 from .load_categories import LoadCategoriesRepository
 from .load_category_by_id import LoadCategoryByIdRepository
 from .update_category import UpdateCategoryRepository
+from .create_expense import CreateExpenseRepository
 from .load_expenses import LoadExpensesRepository
 from .load_expense_by_id import LoadExpenseByIdRepository

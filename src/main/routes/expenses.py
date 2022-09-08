@@ -5,6 +5,7 @@ from src.main.config import db
 from src.infra.persistence.sqlalchemy.models import Expense
 from src.infra.persistence.sqlalchemy.schemas import expense_schema, expenses_schema
 from src.infra.persistence.sqlalchemy.repositories import (
+    CreateExpenseRepository,
     LoadExpensesRepository,
     LoadExpenseByIdRepository,
 )
@@ -39,13 +40,11 @@ def expenses_create() -> Response:
     category_id = request.json.get("category_id", "")
     amount = request.json.get("amount", "")
     try:
-        expense_entity = Expense(
-            _id=str(uuid.uuid4()),
+        expense_entity = CreateExpenseRepository().handle(
+            expense_id=str(uuid.uuid4()),
             amount=amount,
             category_id=category_id,
         )
-        db.session.add(expense_entity)
-        db.session.commit()
         return expense_schema.jsonify(expense_entity), 201
     except TypeError as error:
         print(error)
