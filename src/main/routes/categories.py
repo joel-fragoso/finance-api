@@ -69,9 +69,6 @@ def update(_id: str) -> Response:
 @categories.delete("/categories/<_id>")
 def delete(_id: str) -> Response:
     try:
-        # category_entity = Category.query.get(_id)
-        # db.session.delete(category_entity)
-        # db.session.commit()
         category_entity = DeleteCategoryRepository().handle(category_id=_id)
         return category_schema.jsonify(category_entity), 204
     except TypeError as error:
