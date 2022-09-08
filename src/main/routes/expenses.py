@@ -8,6 +8,7 @@ from src.infra.persistence.sqlalchemy.repositories import (
     CreateExpenseRepository,
     LoadExpensesRepository,
     LoadExpenseByIdRepository,
+    UpdateExpenseRepository,
 )
 
 expenses = Blueprint("expenses", __name__, url_prefix="/api/v1.0")
@@ -57,11 +58,9 @@ def expenses_update(_id: str) -> Response:
     category_id = request.json.get("category_id", "")
     amount = request.json.get("amount", "")
     try:
-        expense_entity = Expense.query.get(_id)
-        expense_entity.category_id = category_id
-        expense_entity.amount = amount
-        db.session.add(expense_entity)
-        db.session.commit()
+        expense_entity = UpdateExpenseRepository().handle(
+            expense_id=_id, amount=amount, category_id=category_id
+        )
         return expense_schema.jsonify(expense_entity), 200
     except TypeError as error:
         print(error)

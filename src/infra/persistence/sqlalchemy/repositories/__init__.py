@@ -6,3 +6,4 @@ from .update_category import UpdateCategoryRepository
 from .create_expense import CreateExpenseRepository
 from .load_expenses import LoadExpensesRepository
 from .load_expense_by_id import LoadExpenseByIdRepository
+from .update_expense import UpdateExpenseRepository
