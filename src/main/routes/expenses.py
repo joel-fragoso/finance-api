@@ -2,10 +2,10 @@ import uuid
 from flask import Blueprint, Response, request, jsonify
 
 from src.main.config import db
-from src.infra.persistence.sqlalchemy.models import Expense
 from src.infra.persistence.sqlalchemy.schemas import expense_schema, expenses_schema
 from src.infra.persistence.sqlalchemy.repositories import (
     CreateExpenseRepository,
+    DeleteExpenseRepository,
     LoadExpensesRepository,
     LoadExpenseByIdRepository,
     UpdateExpenseRepository,
@@ -71,9 +71,7 @@ def expenses_update(_id: str) -> Response:
 @expenses.delete("/expenses/<_id>")
 def expenses_delete(_id: str) -> Response:
     try:
-        expense_entity = Expense.query.get(_id)
-        db.session.delete(expense_entity)
-        db.session.commit()
+        expense_entity = DeleteExpenseRepository().handle(expense_id=_id)
         return expense_schema.jsonify(expense_entity), 204
     except TypeError as error:
         print(error)
