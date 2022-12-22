@@ -18,7 +18,7 @@ flake8 = "*"
 pre-commit = "*"
 
 [requires]
-python_version = "^3.8"
+python_version = "^3.10"
 
 [scripts]
 dev = "flask --app src.main.server --debug run --reload"
